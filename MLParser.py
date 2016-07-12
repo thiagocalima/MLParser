@@ -1,13 +1,24 @@
 #! /usr/bin/python
 import sys
-import urllib2
 import os
 from lxml import html
 import requests
+from statistics import mean
+from statistics import mode
+from statistics import median
+from statistics import stdev
+from statistics import median_grouped
+
+def removeOutliers(priceList, mean, stdev):
+	for price in priceList:
+		if (abs(((price - mean)/stdev)) > 1):
+			priceList.remove(price)
+
+	return(priceList)
 
 
 def ParseMLPrice(url):
-	ads = []
+	adPrices = []
 	statusCode = 200
 	counter = 1
 	header = {
@@ -24,18 +35,18 @@ def ParseMLPrice(url):
 			page = requests.get(url)
 			tree = html.fromstring(page.content)
 		except requests.exceptions.Timeout as t:
-			print(t)
 			# Maybe set up for a retry, or continue in a retry loop
+			print('ERROR: URL Timeout! Skipping...')
 		except requests.exceptions.TooManyRedirects as r:
-			print(r)
 			# Tell the user their URL was bad and try a different one
+			print('ERROR: Too Many Redirects! Skipping...')
 		except requests.exceptions.ConnectionError as c:
-			print("erro")
-			sys.exit(1)
 			# Tell the user their URL isn't found
+			print('ERROR: Connection Error!')
+			sys.exit(1)
 		except requests.exceptions.RequestException as e:
 			# catastrophic error. bail.
-			print e
+			print ('ERROR: Request Exception')
 			sys.exit(1)
 
 		prices = tree.xpath("//div[2]/div/strong/text()")
@@ -44,7 +55,7 @@ def ParseMLPrice(url):
 			if price.strip():
 				value = (''.join(s for s in price if s.isdigit()))
 				if value.strip():
-					print(value)
+					adPrices.append(int(value))
 
 		counter += 50
 
@@ -52,9 +63,25 @@ def ParseMLPrice(url):
 
 		statusCode = page.status_code
 
+	return (adPrices)	
+
 
 def main():
-	ParseMLPrice(sys.argv[1])
+	adPrices = ParseMLPrice(sys.argv[1])
+
+	meanPrice = mean(adPrices)
+	stdevPrice = stdev(adPrices)
+
+	adPrices = removeOutliers(adPrices, meanPrice, stdevPrice)
+
+	print('Average: ' + str(mean(adPrices)))
+	print('Mode: ' + str(mode(adPrices)))
+	print('Median: ' + str(median(adPrices)))
+	print('Standard Deviation: ' + str(stdev(adPrices)))
+	print('Median Grouped: ' + str(median_grouped(adPrices)))
+	print('Minimum: ' + str(min(adPrices)))
+	print('Maximum: ' + str(max(adPrices)))
+
 
 if __name__ == '__main__':
 		sys.exit(main())
