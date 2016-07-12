@@ -1,6 +1,5 @@
 #! /usr/bin/python
 import sys
-import os
 from lxml import html
 import requests
 from statistics import mean
