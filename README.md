@@ -18,3 +18,6 @@ The URL will contain the desired query made on the MercadoLivre/MercadoLibre sea
 - Make dynamic the zScore;
 - Implement some intelligence to wait for an interval between the queries (to avoid blocking);
 - Other improvements yet not pictured.
+
+
+This script was born because my sister wanted to sell her used iPhone and asked me how much should she ask for it!
