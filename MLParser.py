@@ -2,11 +2,8 @@
 import sys
 from lxml import html
 import requests
-from statistics import mean
-from statistics import mode
-from statistics import median
-from statistics import stdev
-from statistics import median_grouped
+from statistics import mean, mode, median, stdev, median_grouped
+
 
 def removeOutliers(priceList, mean, stdev):
 	for price in priceList:
@@ -29,24 +26,29 @@ def ParseMLPrice(url):
 				'Connection': 'keep-alive'
 				}
 
+	if "_DisplayType_LF" not in url:
+		url = url + "_DisplayType_LF"
+
 	while (statusCode == 200):
 		try:
 			page = requests.get(url)
 			tree = html.fromstring(page.content)
 		except requests.exceptions.Timeout as t:
 			# Maybe set up for a retry, or continue in a retry loop
-			print('ERROR: URL Timeout! Skipping...')
+			print('ERROR: URL Timeout! URL = ' + url)
 		except requests.exceptions.TooManyRedirects as r:
 			# Tell the user their URL was bad and try a different one
-			print('ERROR: Too Many Redirects! Skipping...')
+			print('ERROR: Too Many Redirects! URL = ' + url)
 		except requests.exceptions.ConnectionError as c:
 			# Tell the user their URL isn't found
-			print('ERROR: Connection Error!')
+			print('ERROR: Connection Error! URL = ' + url)
 			sys.exit(1)
 		except requests.exceptions.RequestException as e:
 			# catastrophic error. bail.
-			print ('ERROR: Request Exception')
+			print ('ERROR: Request Exception! URL = ' + url)
 			sys.exit(1)
+		except lxml.etree.XMLSyntaxError as l:
+			print ('ERROR: XML Syntax Error! URL = ' + url)
 
 		prices = tree.xpath("//div[2]/div/strong/text()")
 
@@ -73,13 +75,13 @@ def main():
 
 	adPrices = removeOutliers(adPrices, meanPrice, stdevPrice)
 
-	print('Average: ' + str(mean(adPrices)))
-	print('Mode: ' + str(mode(adPrices)))
-	print('Median: ' + str(median(adPrices)))
-	print('Standard Deviation: ' + str(stdev(adPrices)))
-	print('Median Grouped: ' + str(median_grouped(adPrices)))
-	print('Minimum: ' + str(min(adPrices)))
-	print('Maximum: ' + str(max(adPrices)))
+	print('Average: ' + str(round(mean(adPrices),2)))
+	print('Mode: ' + str(round(mode(adPrices))))
+	print('Median: ' + str(round(median(adPrices))))
+	print('Standard Deviation: ' + str(round(stdev(adPrices))))
+	print('Median Grouped: ' + str(round(median_grouped(adPrices))))
+	print('Minimum: ' + str(round(min(adPrices))))
+	print('Maximum: ' + str(round(max(adPrices))))
 
 
 if __name__ == '__main__':
