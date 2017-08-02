@@ -19,8 +19,5 @@ The URL will contain the desired query made on the MercadoLivre/MercadoLibre sea
 - Implement some intelligence to wait for an interval between the queries (to avoid blocking);
 - Other improvements yet not pictured.
 
-#Known Issues:
-- This isn't working for queries of car advertisements.
-
 
 This script was born because my sister wanted to sell her used iPhone and asked me how much should she ask for it! :)
