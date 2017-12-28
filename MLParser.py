@@ -79,7 +79,7 @@ def main():
 	
 	try:
 		print('Mode: ' + str(round(mode(adPrices))))
-	except StatisticsError as m:
+	except:
 		print('ERROR: Unable to print Mode!')
 
 	print('Median: ' + str(round(median(adPrices))))
