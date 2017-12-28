@@ -76,7 +76,12 @@ def main():
 	adPrices = removeOutliers(adPrices, meanPrice, stdevPrice)
 
 	print('Average: ' + str(round(mean(adPrices),2)))
-	print('Mode: ' + str(round(mode(adPrices))))
+	
+	try:
+		print('Mode: ' + str(round(mode(adPrices))))
+	except statistics.StatisticsError as m:
+		print('ERROR: Unable to print Mode!')
+
 	print('Median: ' + str(round(median(adPrices))))
 	print('Standard Deviation: ' + str(round(stdev(adPrices))))
 	print('Median Grouped: ' + str(round(median_grouped(adPrices))))
