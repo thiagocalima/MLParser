@@ -1,4 +1,4 @@
-#MLParser
+# MLParser
 Price parser for MercadoLivre/MercadoLibre ads
 This script is very simple and (at this moment) is able to return the following metrics:
 - Average;
