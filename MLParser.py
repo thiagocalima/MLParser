@@ -50,7 +50,7 @@ def ParseMLPrice(url):
 		except lxml.etree.XMLSyntaxError as l:
 			print ('ERROR: XML Syntax Error! URL = ' + url)
 
-		prices = tree.xpath("//div[2]/div/div[1]/div/span[2]/text()")
+		prices = tree.xpath("/html/body/main/div/div[2]/section/ol/li[1]/div/div/div[2]/div[2]/div[1]/div[1]/div/div/div/span[1]/span[2]/span[2]/text()")
 
 		for price in prices:
 			if price.strip():
